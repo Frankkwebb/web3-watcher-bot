@@ -1,0 +1,10 @@
+app = "web3-watcher-bot"
+
+[build]
+  builder = "paketobuildpacks/builder:base"
+
+[[services]]
+  internal_port = 8080
+
+[processes]
+  app = "python bot.py"
