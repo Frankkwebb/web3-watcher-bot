@@ -1,4 +1,4 @@
-app = "web3-watcher-bot"
+app = "web3-watcher-frank"
 
 [build]
   builder = "paketobuildpacks/builder:base"
