@@ -549,9 +549,21 @@ def run_x_cycle():
     send_digest("X Feed Scan")
     log.info("X cycle complete.")
 
+def clear_old_updates():
+    """Flush any pending Telegram updates so old commands are ignored on startup."""
+    global last_update_id
+    try:
+        updates = get_updates()
+        if updates:
+            last_update_id = updates[-1]["update_id"]
+            log.info(f"Cleared {len(updates)} old updates. Starting from ID {last_update_id + 1}")
+    except Exception as e:
+        log.warning(f"Could not clear updates: {e}")
+
 def main():
     log.info("Bot v10 starting...")
     set_bot_commands()
+    clear_old_updates()  # flush stale commands before polling starts
     send(
         "🤖 *Web3 Watcher Bot v10 is online!*\n"
         f"{'━' * 18}\n"
@@ -565,11 +577,11 @@ def main():
         f"{'─' * 18}\n"
         "Commands: /run /opensea /etherscan /xstatus /status /help"
     )
-    run_cycle()
-    run_x_cycle()
     schedule.every(CHECK_INTERVAL_MINUTES).minutes.do(run_cycle)
     schedule.every(X_CHECK_INTERVAL).minutes.do(run_x_cycle)
     schedule.every(1).minutes.do(handle_commands)
+    run_cycle()
+    run_x_cycle()
     while True:
         schedule.run_pending()
         time.sleep(10)
