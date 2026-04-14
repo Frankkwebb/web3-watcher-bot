@@ -285,7 +285,7 @@ def check_x_feeds():
                 link    = e.get("link", "")
                 summary = BeautifulSoup(e.get("summary", ""), "html.parser").get_text()
                 if not title: continue
-                if not is_fresh(e, hours=0.25): continue  # only last 15 mins
+                if not is_fresh(e, hours=1): continue  # only last 1 hour
                 if not is_english(title + summary): continue
                 key = f"x_{hashlib.md5(title.encode()).hexdigest()}"
                 if not is_new(key): continue
@@ -462,6 +462,11 @@ def handle_commands():
         if text == "/run":
             send("⚡ *Manual scan triggered!* Running now...", chat_id=user_id)
             run_cycle()
+            run_x_cycle()
+
+        elif text == "/xrun":
+            send("🐦 *X feed scan triggered!* Running now...", chat_id=user_id)
+            run_x_cycle()
 
         elif text == "/status":
             send(
